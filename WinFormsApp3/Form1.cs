@@ -12,21 +12,21 @@ namespace WinFormsApp3
 {
     public partial class Form1 : Form
     {
-        private Dictionary<Button, ClickHander> buttons;
-        private Dictionary<ClickHander, Dictionary <Button, method>> methods;
+        private Dictionary<Button, ClickHander> buttons; // Словарь с функциями для кнопок
+        private Dictionary<ClickHander, Dictionary <Button, method>> methods; // Словарь с словарём с кнопками и методами закраски
         private delegate void method();
         private delegate void ClickHander(MouseEventArgs e);
         method lm = () => { };
         ClickHander figure = Zero; // Если ничего не выбрано, то ничего не делается =D
         private Graphics g;
-        private Pen p = new Pen(Color.Black, 2f);
-        private SolidBrush s = new SolidBrush(Color.AliceBlue); 
-        private Pen p2 = new Pen(Color.Black, 1.5f);
+        private Pen p = new Pen(Color.Black, 2f); // Основной карандаш, которым рисуются фигуры.
+        private SolidBrush s = new SolidBrush(Color.AliceBlue); // Цвет для заливки.
+        private Pen p2 = new Pen(Color.Black, 1.5f); // карандаш для заштриховки.
         private Point[] points;
 
-        private void pictureBox1_MouseDown(object sender, MouseEventArgs e) => points[0] = new Point(e.X, e.Y);
+        private void pictureBox1_MouseDown(object sender, MouseEventArgs e) => points[0] = new Point(e.X, e.Y); // Действие при прижатии кнопки мышки
 
-        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e) // Действие при отпускании кнопки мышки
         { 
             int minx,maxx,miny,maxy;
             minx = Math.Min(points[0].X, e.X);
@@ -43,12 +43,12 @@ namespace WinFormsApp3
             points = new Point[points.Length];
         }
 
-        private void button12_Click(object sender, EventArgs e)
+        private void button12_Click(object sender, EventArgs e) // Действие при нажатии на кнопку отчистить
         {
             pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
         }
 
-        private void button13_Click(object sender, EventArgs e) => Application.Exit();
+        private void button13_Click(object sender, EventArgs e) => Application.Exit(); // Действие при нажатии на кнопку "Выход"
 
         private void Rectangle(MouseEventArgs e) // Прямоугольник
         {
@@ -92,7 +92,7 @@ namespace WinFormsApp3
             g.DrawLines(p, points);
         }
         
-        private static void Zero(MouseEventArgs e) { }
+        private static void Zero(MouseEventArgs e) { } // Пустая функция, для избегания проблем в будущем
 
         private void buttons_Click(object sender, EventArgs e) // Действие для нажатия любой кнопки отвечающей за фигуры
         {
@@ -104,8 +104,8 @@ namespace WinFormsApp3
                 el.Enabled = true;
         }
 
-        private int t = 3;
-
+        private int t = 3; // шаг заштриховки
+       
         private void vhatching_Rectangle()
         {
             Point a, b;
@@ -117,8 +117,8 @@ namespace WinFormsApp3
                 a.X += t;
                 b.X += t;
             }
-        }
-
+        } // вертикальная штриховка прямоугольника
+      
         private void hhatching_Rectangle()
         {
             Point a, b;
@@ -130,23 +130,23 @@ namespace WinFormsApp3
                 a.Y +=t;
                 b.Y += t;
             }
-        }
+        } // горизонтальная штриховка прямоугольника
 
-        private void fill_Rectangle() => g.FillPolygon(s, points);
+        private void fill_Rectangle() => g.FillPolygon(s, points); // Заполнения прямоугольника одним цветом
 
         private void fill_Ellipse()
         {
             int width = points[0].len(points[3]);
             int height = points[0].len(points[1]);
             g.FillEllipse(s, points[0].X, points[0].Y, width, height);
-        }
+        } // Заполнение Эллипса
         
         private void fill_lines()
         {
             System.Drawing.Drawing2D.GraphicsPath path = new System.Drawing.Drawing2D.GraphicsPath();
             path.AddLines(points);   
             g.FillPath(s, path);
-        }
+        } // Заполнение триугольника, трапеции и ромба.
 
         private void clip_Ellipse()
         {
@@ -157,19 +157,19 @@ namespace WinFormsApp3
             path.AddEllipse(points[0].X, points[0].Y, width, height);
             rgn.Exclude(path);
             g.FillRegion(Brushes.White, rgn);
-        }
+        } // Обрезка Эллипса из заштрихованного прямоугольника
 
         private void vhatching_Ellipse()
         {
             vhatching_Rectangle();
             clip_Ellipse();
-        }
+        } // вертикальная штриховка прямоугольника с Эллипсом
 
         private void hhatching_Ellipse()
         {
             hhatching_Rectangle();
             clip_Ellipse();
-        }
+        } // горизонтальная штриховка прямоугольника с Эллипсом
 
         public Form1()
         {
@@ -223,9 +223,9 @@ namespace WinFormsApp3
             
         }
 
-        private void button2_Click(object sender, EventArgs e) => lm = methods[figure][(Button)sender];
+        private void button2_Click(object sender, EventArgs e) => lm = methods[figure][(Button)sender]; // Действие при нажатии на кнопки методов
 
-        private void button6_Click(object sender, EventArgs e)
+        private void button6_Click(object sender, EventArgs e) // Действие при нажатии кнопки "Ничего"
         {
             foreach (Button el in methods[Rectangle].Keys)
                 el.Enabled = false;
@@ -235,6 +235,7 @@ namespace WinFormsApp3
     }
     public static class ext
     {
+        // В функциях используются формулы из геометрии 
         // функция для нахождения точки посереди отрезка p1-p2
         public static Point middle(this Point p1, Point p2) => new Point((int)((p1.X + p2.X) / 2), (int)((p1.Y + p2.Y) / 2));
         // функция для нахождения длины отрезка p1-p2
